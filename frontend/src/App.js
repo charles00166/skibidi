@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import './App.css';
 
 const InvoiceGenerator = () => {
@@ -21,6 +23,7 @@ const InvoiceGenerator = () => {
   const [savedCustomers, setSavedCustomers] = useState([]);
   const [customerPurchases, setCustomerPurchases] = useState({});
   const [showCustomerSelector, setShowCustomerSelector] = useState(false);
+  const [showReporting, setShowReporting] = useState(false);
   const [customerSearchTerm, setCustomerSearchTerm] = useState('');
 
   const [invoiceDetails, setInvoiceDetails] = useState({
