@@ -1,38 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
-    text-align: center;
+  min-height: 100vh;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Print styles */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+  
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+  
+  .print\:max-w-none {
+    max-width: none !important;
+  }
+  
+  .print\:bg-transparent {
+    background-color: transparent !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .invoice-page {
+    page-break-inside: avoid;
+  }
+  
+  /* Hide input borders in print */
+  input {
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  
+  select {
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    appearance: none !important;
+  }
+  
+  /* Ensure table borders are visible in print */
+  table, th, td {
+    border-collapse: collapse;
+  }
+  
+  .border {
+    border: 1px solid #000 !important;
+  }
+  
+  .border-b {
+    border-bottom: 1px solid #000 !important;
+  }
+  
+  .border-gray-300 {
+    border-color: #000 !important;
+  }
+  
+  /* Ensure colors are visible in print */
+  .bg-purple-600 {
+    background-color: #7c3aed !important;
+    color: white !important;
+  }
+  
+  .text-purple-600 {
+    color: #7c3aed !important;
+  }
+  
+  .bg-gray-50 {
+    background-color: #f9fafb !important;
+  }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Custom styles for Arabic text */
+.arabic-text {
+  font-family: 'Arial Unicode MS', 'Tahoma', sans-serif;
+  direction: rtl;
+  text-align: right;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Invoice specific styles */
+.invoice-header {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
 }
 
-.App-link {
-    color: #61dafb;
+.invoice-table th {
+  background-color: #f8fafc;
+  font-weight: 600;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.invoice-table td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Input styling for seamless integration */
+.seamless-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 2px;
+}
+
+.seamless-input:focus {
+  background-color: #fffbeb;
+  border-radius: 2px;
+}
+
+/* Button hover effects */
+.btn-primary {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .invoice-container {
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .control-panel {
+    border-radius: 0;
+    margin: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .grid-responsive {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animation for adding new items */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.item-row {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Focus states for better UX */
+input:focus, select:focus {
+  outline: 2px solid #7c3aed;
+  outline-offset: -2px;
+  border-radius: 2px;
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Success states */
+.success-border {
+  border-color: #10b981 !important;
+}
+
+.error-border {
+  border-color: #ef4444 !important;
+}
+
+/* Utility classes */
+.text-currency {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  text-align: right;
+}
+
+.highlight-total {
+  background: linear-gradient(90deg, #fef3c7 0%, #fbbf24 100%);
+  font-weight: bold;
 }
