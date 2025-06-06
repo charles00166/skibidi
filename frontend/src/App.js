@@ -20,7 +20,7 @@ const InvoiceGenerator = () => {
 
   const [invoiceDetails, setInvoiceDetails] = useState({
     number: '6005',
-    date: new Date().toLocaleDateString('en-GB'),
+    date: new Date().toISOString().split('T')[0],
     deliveryOrderNo: '',
     lpoNumber: 'VERBAL'
   });
