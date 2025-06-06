@@ -612,7 +612,7 @@ const InvoiceGenerator = () => {
                     </tr>
                     <tr className="border-b">
                       <td className="p-2 text-right font-medium">Vat {vatRate}%:</td>
-                      <td className="p-2 text-right">{calculateVat().toFixed(2)}</td>
+                      <td className="p-2 text-right">{calculateTotalVat().toFixed(2)}</td>
                     </tr>
                     <tr className="bg-gray-50">
                       <td className="p-2 text-right font-bold">Total:</td>
