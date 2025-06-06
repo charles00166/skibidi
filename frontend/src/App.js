@@ -19,6 +19,7 @@ const InvoiceGenerator = () => {
   });
 
   const [savedCustomers, setSavedCustomers] = useState([]);
+  const [customerPurchases, setCustomerPurchases] = useState({});
   const [showCustomerSelector, setShowCustomerSelector] = useState(false);
   const [customerSearchTerm, setCustomerSearchTerm] = useState('');
 
@@ -30,24 +31,41 @@ const InvoiceGenerator = () => {
   });
 
   const [items, setItems] = useState([
-    { id: 1, description: '', qty: '', unit: 'Set', rate: '', amount: 0 }
+    { id: 1, description: '', qty: '', unit: '', rate: '', amount: 0, vatAmount: 0 }
   ]);
 
   const [vatRate, setVatRate] = useState(5);
   const printRef = useRef();
 
-  // Load saved customers from localStorage on component mount
+  // Load saved data from localStorage on component mount
   useEffect(() => {
-    const saved = localStorage.getItem('invoiceCustomers');
-    if (saved) {
-      setSavedCustomers(JSON.parse(saved));
+    const savedCustomersData = localStorage.getItem('invoiceCustomers');
+    const savedPurchasesData = localStorage.getItem('customerPurchases');
+    const savedInvoiceNumber = localStorage.getItem('lastInvoiceNumber');
+    
+    if (savedCustomersData) {
+      setSavedCustomers(JSON.parse(savedCustomersData));
+    }
+    if (savedPurchasesData) {
+      setCustomerPurchases(JSON.parse(savedPurchasesData));
+    }
+    if (savedInvoiceNumber) {
+      setInvoiceDetails(prev => ({ ...prev, number: savedInvoiceNumber }));
     }
   }, []);
 
-  // Save customers to localStorage whenever savedCustomers changes
+  // Save data to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('invoiceCustomers', JSON.stringify(savedCustomers));
   }, [savedCustomers]);
+
+  useEffect(() => {
+    localStorage.setItem('customerPurchases', JSON.stringify(customerPurchases));
+  }, [customerPurchases]);
+
+  useEffect(() => {
+    localStorage.setItem('lastInvoiceNumber', invoiceDetails.number);
+  }, [invoiceDetails.number]);
 
   const saveCustomer = () => {
     if (customerInfo.name.trim()) {
@@ -69,6 +87,39 @@ const InvoiceGenerator = () => {
     }
   };
 
+  const recordPurchase = () => {
+    if (customerInfo.name.trim()) {
+      const total = calculateTotal();
+      const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+      const customerKey = customerInfo.name.toLowerCase();
+      
+      setCustomerPurchases(prev => {
+        const updated = { ...prev };
+        if (!updated[customerKey]) {
+          updated[customerKey] = {};
+        }
+        if (!updated[customerKey][currentMonth]) {
+          updated[customerKey][currentMonth] = 0;
+        }
+        updated[customerKey][currentMonth] += total;
+        return updated;
+      });
+    }
+  };
+
+  const getCustomerMonthlyTotal = (customerName, month) => {
+    const customerKey = customerName.toLowerCase();
+    return customerPurchases[customerKey]?.[month] || 0;
+  };
+
+  const getCustomerTotalPurchases = (customerName) => {
+    const customerKey = customerName.toLowerCase();
+    const customerData = customerPurchases[customerKey];
+    if (!customerData) return 0;
+    
+    return Object.values(customerData).reduce((sum, amount) => sum + amount, 0);
+  };
+
   const loadCustomer = (customer) => {
     setCustomerInfo(customer);
     setShowCustomerSelector(false);
@@ -77,6 +128,16 @@ const InvoiceGenerator = () => {
 
   const deleteCustomer = (customerId) => {
     if (window.confirm('Are you sure you want to delete this customer?')) {
+      const customerToDelete = savedCustomers.find(c => c.id === customerId);
+      if (customerToDelete) {
+        // Remove from purchases as well
+        const customerKey = customerToDelete.name.toLowerCase();
+        setCustomerPurchases(prev => {
+          const updated = { ...prev };
+          delete updated[customerKey];
+          return updated;
+        });
+      }
       setSavedCustomers(savedCustomers.filter(customer => customer.id !== customerId));
     }
   };
@@ -95,9 +156,10 @@ const InvoiceGenerator = () => {
       id: items.length + 1,
       description: '',
       qty: '',
-      unit: 'Set',
+      unit: '',
       rate: '',
-      amount: 0
+      amount: 0,
+      vatAmount: 0
     };
     setItems([...items, newItem]);
   };
@@ -116,6 +178,7 @@ const InvoiceGenerator = () => {
           const qty = parseFloat(updatedItem.qty) || 0;
           const rate = parseFloat(updatedItem.rate) || 0;
           updatedItem.amount = qty * rate;
+          updatedItem.vatAmount = (updatedItem.amount * vatRate) / 100;
         }
         return updatedItem;
       }
@@ -127,24 +190,38 @@ const InvoiceGenerator = () => {
     return items.reduce((sum, item) => sum + item.amount, 0);
   };
 
-  const calculateVat = () => {
-    const subtotal = calculateSubtotal();
-    return (subtotal * vatRate) / 100;
+  const calculateTotalVat = () => {
+    return items.reduce((sum, item) => sum + item.vatAmount, 0);
   };
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
-    const vat = calculateVat();
+    const vat = calculateTotalVat();
     return subtotal + vat;
   };
 
   const handlePrint = () => {
-    window.print();
+    // Record the purchase before printing
+    recordPurchase();
+    
+    // Use setTimeout to ensure state updates are processed
+    setTimeout(() => {
+      window.print();
+    }, 100);
   };
 
   const generateNewInvoiceNumber = () => {
-    const newNumber = (parseInt(invoiceDetails.number) + 1).toString();
-    setInvoiceDetails({ ...invoiceDetails, number: newNumber });
+    const currentNumber = parseInt(invoiceDetails.number) || 6005;
+    const newNumber = (currentNumber + 1).toString();
+    setInvoiceDetails(prev => ({ 
+      ...prev, 
+      number: newNumber,
+      date: new Date().toISOString().split('T')[0]
+    }));
+    
+    // Clear current invoice data
+    setItems([{ id: 1, description: '', qty: '', unit: '', rate: '', amount: 0, vatAmount: 0 }]);
+    setCustomerInfo({ name: '', address: '', telFax: '', trn: '' });
   };
 
   return (
