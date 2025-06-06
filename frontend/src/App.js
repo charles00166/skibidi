@@ -202,12 +202,28 @@ const InvoiceGenerator = () => {
 
   const handlePrint = () => {
     // Record the purchase before printing
-    recordPurchase();
+    if (customerInfo.name.trim()) {
+      const total = calculateTotal();
+      const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+      const customerKey = customerInfo.name.toLowerCase();
+      
+      setCustomerPurchases(prev => {
+        const updated = { ...prev };
+        if (!updated[customerKey]) {
+          updated[customerKey] = {};
+        }
+        if (!updated[customerKey][currentMonth]) {
+          updated[customerKey][currentMonth] = 0;
+        }
+        updated[customerKey][currentMonth] += total;
+        return updated;
+      });
+    }
     
     // Use setTimeout to ensure state updates are processed
     setTimeout(() => {
       window.print();
-    }, 100);
+    }, 200);
   };
 
   const generateNewInvoiceNumber = () => {
