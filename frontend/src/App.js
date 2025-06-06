@@ -442,7 +442,10 @@ const InvoiceGenerator = () => {
                           <div className="text-sm text-gray-600">{customer.address}</div>
                           <div className="text-xs text-gray-500">{customer.telFax}</div>
                           <div className="text-xs text-blue-600 mt-1">
-                            This month: AED {monthlyTotal.toFixed(2)} | Total: AED {totalPurchases.toFixed(2)}
+                            {getCurrentMonthRange()}: AED {monthlyTotal.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-green-600">
+                            Total Spent: AED {totalPurchases.toFixed(2)}
                           </div>
                         </div>
                         <button
