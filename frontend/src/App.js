@@ -154,7 +154,7 @@ const InvoiceGenerator = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Invoice Generator</h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <button
               onClick={addItem}
               className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
@@ -168,12 +168,94 @@ const InvoiceGenerator = () => {
               New Invoice
             </button>
             <button
+              onClick={() => setShowCustomerSelector(!showCustomerSelector)}
+              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+            >
+              {showCustomerSelector ? 'Hide Customers' : 'Load Customer'}
+            </button>
+            <button
               onClick={handlePrint}
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
             >
               Print Invoice
             </button>
           </div>
+
+          {/* Customer Management Section */}
+          <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Customer Management</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <button
+                onClick={saveCustomer}
+                className="bg-green-500 text-white px-3 py-2 rounded hover:bg-green-600"
+                disabled={!customerInfo.name.trim()}
+              >
+                Save Customer
+              </button>
+              <button
+                onClick={clearCustomerInfo}
+                className="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600"
+              >
+                Clear Customer
+              </button>
+              <div className="text-sm text-gray-600 px-3 py-2">
+                Saved Customers: {savedCustomers.length}
+              </div>
+              <div className="text-sm text-gray-600 px-3 py-2">
+                {customerInfo.name ? `Current: ${customerInfo.name}` : 'No customer selected'}
+              </div>
+            </div>
+          </div>
+
+          {/* Customer Selector */}
+          {showCustomerSelector && (
+            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lg font-semibold text-gray-800">Select Customer</h3>
+                <button
+                  onClick={() => setShowCustomerSelector(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <input
+                type="text"
+                placeholder="Search customers..."
+                value={customerSearchTerm}
+                onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+              />
+              
+              <div className="max-h-60 overflow-y-auto">
+                {filteredCustomers.length > 0 ? (
+                  filteredCustomers.map(customer => (
+                    <div key={customer.id} className="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50">
+                      <div className="flex-1 cursor-pointer" onClick={() => loadCustomer(customer)}>
+                        <div className="font-medium text-gray-800">{customer.name}</div>
+                        <div className="text-sm text-gray-600">{customer.address}</div>
+                        <div className="text-xs text-gray-500">{customer.telFax}</div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteCustomer(customer.id);
+                        }}
+                        className="text-red-500 hover:text-red-700 ml-2"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-gray-500 text-center py-4">
+                    {customerSearchTerm ? 'No customers found matching your search.' : 'No saved customers yet.'}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Quick Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
