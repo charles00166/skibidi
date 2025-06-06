@@ -536,8 +536,9 @@ const InvoiceGenerator = () => {
                   <th className="p-2 text-left w-16">Qty</th>
                   <th className="p-2 text-left w-16">Unit</th>
                   <th className="p-2 text-left w-20">RATE</th>
-                  <th className="p-2 text-left w-24">Amount</th>
-                  <th className="p-2 text-left w-12 print:hidden">Action</th>
+                  <th className="p-2 text-left w-20">Amount</th>
+                  <th className="p-2 text-left w-20">VAT</th>
+                  <th className="p-2 text-left w-12 print:hidden">Remove</th>
                 </tr>
               </thead>
               <tbody>
@@ -563,17 +564,13 @@ const InvoiceGenerator = () => {
                       />
                     </td>
                     <td className="p-2">
-                      <select
+                      <input
+                        type="text"
                         value={item.unit}
                         onChange={(e) => updateItem(item.id, 'unit', e.target.value)}
-                        className="w-full border-none outline-none print:bg-transparent"
-                      >
-                        <option value="Set">Set</option>
-                        <option value="Pcs">Pcs</option>
-                        <option value="Box">Box</option>
-                        <option value="Mtr">Mtr</option>
-                        <option value="Kg">Kg</option>
-                      </select>
+                        className="w-full border-none outline-none print:bg-transparent text-center"
+                        placeholder="Set"
+                      />
                     </td>
                     <td className="p-2">
                       <input
@@ -588,11 +585,14 @@ const InvoiceGenerator = () => {
                     <td className="p-2 text-right font-medium">
                       {item.amount.toFixed(2)}
                     </td>
+                    <td className="p-2 text-right font-medium">
+                      {item.vatAmount.toFixed(2)}
+                    </td>
                     <td className="p-2 print:hidden">
                       {items.length > 1 && (
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-red-600 hover:text-red-800 text-lg"
                         >
                           ×
                         </button>
@@ -602,8 +602,9 @@ const InvoiceGenerator = () => {
                 ))}
                 
                 {/* Empty rows for spacing */}
-                {Array.from({ length: Math.max(0, 10 - items.length) }).map((_, index) => (
+                {Array.from({ length: Math.max(0, 8 - items.length) }).map((_, index) => (
                   <tr key={`empty-${index}`} className="border-b h-8">
+                    <td className="p-2"></td>
                     <td className="p-2"></td>
                     <td className="p-2"></td>
                     <td className="p-2"></td>
