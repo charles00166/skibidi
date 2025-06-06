@@ -885,11 +885,6 @@ const InvoiceGenerator = () => {
               </div>
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="mt-6 text-center text-xs text-gray-500">
-            <p>Jact Entry & Mts Entry only</p>
-          </div>
         </div>
       </div>
     </div>
