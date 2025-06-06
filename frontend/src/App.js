@@ -267,10 +267,54 @@ const InvoiceGenerator = () => {
       });
     }
     
-    // Use setTimeout to ensure state updates are processed
+    // Use setTimeout to ensure state updates are processed, then open print dialog
     setTimeout(() => {
       window.print();
     }, 200);
+  };
+
+  const exportToPDF = async () => {
+    // Record the purchase before PDF export
+    if (customerInfo.name.trim()) {
+      const total = calculateTotal();
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      const customerKey = customerInfo.name.toLowerCase();
+      
+      setCustomerPurchases(prev => {
+        const updated = { ...prev };
+        if (!updated[customerKey]) {
+          updated[customerKey] = {};
+        }
+        if (!updated[customerKey][currentMonth]) {
+          updated[customerKey][currentMonth] = 0;
+        }
+        updated[customerKey][currentMonth] += total;
+        return updated;
+      });
+    }
+
+    try {
+      const element = printRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        logging: false,
+        useCORS: true
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      
+      const fileName = `Invoice_${invoiceDetails.number}_${customerInfo.name || 'Customer'}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
   };
 
   const generateNewInvoiceNumber = () => {
