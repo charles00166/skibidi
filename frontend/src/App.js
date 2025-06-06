@@ -123,6 +123,50 @@ const InvoiceGenerator = () => {
     return Object.values(customerData).reduce((sum, amount) => sum + amount, 0);
   };
 
+  const getMonthDateRange = (monthString) => {
+    const [year, month] = monthString.split('-');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthName = monthNames[parseInt(month) - 1];
+    const daysInMonth = new Date(year, month, 0).getDate();
+    return `${monthName} ${year} (1st - ${daysInMonth}th)`;
+  };
+
+  const getCurrentMonthRange = () => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    return getMonthDateRange(currentMonth);
+  };
+
+  const getAllMonthsData = () => {
+    const allData = [];
+    Object.keys(customerPurchases).forEach(customerKey => {
+      const customerName = savedCustomers.find(c => 
+        c.name.toLowerCase() === customerKey
+      )?.name || customerKey;
+      
+      Object.keys(customerPurchases[customerKey]).forEach(month => {
+        allData.push({
+          customer: customerName,
+          month: getMonthDateRange(month),
+          monthKey: month,
+          amount: customerPurchases[customerKey][month]
+        });
+      });
+    });
+    
+    return allData.sort((a, b) => b.monthKey.localeCompare(a.monthKey));
+  };
+
+  const getTopCustomers = () => {
+    return savedCustomers
+      .map(customer => ({
+        ...customer,
+        totalSpent: getCustomerTotalPurchases(customer.name)
+      }))
+      .sort((a, b) => b.totalSpent - a.totalSpent)
+      .filter(customer => customer.totalSpent > 0);
+  };
+
   const loadCustomer = (customer) => {
     setCustomerInfo(customer);
     setShowCustomerSelector(false);
