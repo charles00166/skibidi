@@ -371,30 +371,38 @@ const InvoiceGenerator = () => {
       <div ref={printRef} className="max-w-4xl mx-auto bg-white shadow-lg print:shadow-none print:max-w-none">
         {/* Header */}
         <div className="bg-white p-6">
-          {/* Company Header Image Placeholder */}
-          <div className="w-full h-32 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-            {/* Header Content Layout matching the original */}
-            <div className="absolute inset-0 flex items-center justify-between px-8">
-              {/* Left side - Logo and Arabic text */}
-              <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                  <div className="w-16 h-16 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">NA</span>
+          {/* Company Header Image */}
+          <div className="w-full mb-4 flex justify-center">
+            <img 
+              src="https://media.discordapp.net/attachments/877287421216182403/1370734874771722250/image.png?ex=68438395&is=68423215&hm=24d13e4f33d5ded9b38c7c65292d1cb6177b73148000ec1d71f6f620ce7ef71e&=&format=webp&quality=lossless&width=1715&height=284"
+              alt="NOOR-AL-ANWAR Company Header"
+              className="max-w-full h-auto max-h-32 object-contain"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+            {/* Fallback header if image fails to load */}
+            <div className="w-full h-32 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg flex items-center justify-center relative overflow-hidden" style={{display: 'none'}}>
+              <div className="absolute inset-0 flex items-center justify-between px-8">
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-2xl">NA</span>
+                    </div>
+                  </div>
+                  <div className="text-white">
+                    <h1 className="text-2xl font-bold arabic-text">{companyInfo.nameArabic}</h1>
+                    <p className="text-sm opacity-90 arabic-text">{companyInfo.subtitleArabic}</p>
                   </div>
                 </div>
-                <div className="text-white">
-                  <h1 className="text-2xl font-bold arabic-text">{companyInfo.nameArabic}</h1>
-                  <p className="text-sm opacity-90 arabic-text">{companyInfo.subtitleArabic}</p>
+                <div className="text-white text-right">
+                  <h2 className="text-3xl font-bold tracking-wider">{companyInfo.name}</h2>
+                  <h3 className="text-xl font-semibold tracking-wide">{companyInfo.subtitle}</h3>
+                  <p className="text-sm mt-1 bg-purple-800 bg-opacity-50 px-3 py-1 rounded">
+                    {companyInfo.description}
+                  </p>
                 </div>
-              </div>
-              
-              {/* Right side - English text */}
-              <div className="text-white text-right">
-                <h2 className="text-3xl font-bold tracking-wider">{companyInfo.name}</h2>
-                <h3 className="text-xl font-semibold tracking-wide">{companyInfo.subtitle}</h3>
-                <p className="text-sm mt-1 bg-purple-800 bg-opacity-50 px-3 py-1 rounded">
-                  {companyInfo.description}
-                </p>
               </div>
             </div>
           </div>
