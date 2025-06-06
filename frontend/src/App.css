@@ -8,10 +8,22 @@
 
 /* Print styles */
 @media print {
+  @page {
+    margin: 0.5in;
+    size: A4;
+  }
+
   body {
     margin: 0;
     padding: 0;
-    background: white;
+    background: white !important;
+    color: black !important;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   
   .print\:hidden {
@@ -35,12 +47,13 @@
     page-break-inside: avoid;
   }
   
-  /* Hide input borders in print */
+  /* Hide input borders in print but keep content visible */
   input {
     border: none !important;
     outline: none !important;
     background: transparent !important;
     box-shadow: none !important;
+    color: black !important;
   }
   
   select {
@@ -49,11 +62,12 @@
     background: transparent !important;
     box-shadow: none !important;
     appearance: none !important;
+    color: black !important;
   }
   
   /* Ensure table borders are visible in print */
   table, th, td {
-    border-collapse: collapse;
+    border-collapse: collapse !important;
   }
   
   .border {
@@ -80,6 +94,23 @@
   
   .bg-gray-50 {
     background-color: #f9fafb !important;
+  }
+
+  /* Force text colors in print */
+  .text-gray-800 {
+    color: #1f2937 !important;
+  }
+
+  .text-gray-600 {
+    color: #4b5563 !important;
+  }
+
+  .font-bold {
+    font-weight: bold !important;
+  }
+
+  .font-medium {
+    font-weight: 500 !important;
   }
 }
 
@@ -164,7 +195,7 @@
 }
 
 /* Focus states for better UX */
-input:focus, select:focus {
+input:focus:not([type="button"]):not([type="submit"]), select:focus {
   outline: 2px solid #7c3aed;
   outline-offset: -2px;
   border-radius: 2px;
