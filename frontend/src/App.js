@@ -36,6 +36,60 @@ const InvoiceGenerator = () => {
   const [vatRate, setVatRate] = useState(5);
   const printRef = useRef();
 
+  // Load saved customers from localStorage on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('invoiceCustomers');
+    if (saved) {
+      setSavedCustomers(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save customers to localStorage whenever savedCustomers changes
+  useEffect(() => {
+    localStorage.setItem('invoiceCustomers', JSON.stringify(savedCustomers));
+  }, [savedCustomers]);
+
+  const saveCustomer = () => {
+    if (customerInfo.name.trim()) {
+      const existingIndex = savedCustomers.findIndex(customer => 
+        customer.name.toLowerCase() === customerInfo.name.toLowerCase()
+      );
+      
+      if (existingIndex >= 0) {
+        // Update existing customer
+        const updatedCustomers = [...savedCustomers];
+        updatedCustomers[existingIndex] = { ...customerInfo, id: savedCustomers[existingIndex].id };
+        setSavedCustomers(updatedCustomers);
+      } else {
+        // Add new customer
+        const newCustomer = { ...customerInfo, id: Date.now() };
+        setSavedCustomers([...savedCustomers, newCustomer]);
+      }
+      alert('Customer saved successfully!');
+    }
+  };
+
+  const loadCustomer = (customer) => {
+    setCustomerInfo(customer);
+    setShowCustomerSelector(false);
+    setCustomerSearchTerm('');
+  };
+
+  const deleteCustomer = (customerId) => {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
+      setSavedCustomers(savedCustomers.filter(customer => customer.id !== customerId));
+    }
+  };
+
+  const clearCustomerInfo = () => {
+    setCustomerInfo({ name: '', address: '', telFax: '', trn: '' });
+  };
+
+  const filteredCustomers = savedCustomers.filter(customer =>
+    customer.name.toLowerCase().includes(customerSearchTerm.toLowerCase()) ||
+    customer.address.toLowerCase().includes(customerSearchTerm.toLowerCase())
+  );
+
   const addItem = () => {
     const newItem = {
       id: items.length + 1,
