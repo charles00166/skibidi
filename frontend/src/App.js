@@ -42,32 +42,50 @@ const InvoiceGenerator = () => {
 
   // Load saved data from localStorage on component mount
   useEffect(() => {
-    const savedCustomersData = localStorage.getItem('invoiceCustomers');
-    const savedPurchasesData = localStorage.getItem('customerPurchases');
-    const savedInvoiceNumber = localStorage.getItem('lastInvoiceNumber');
-    
-    if (savedCustomersData) {
-      setSavedCustomers(JSON.parse(savedCustomersData));
-    }
-    if (savedPurchasesData) {
-      setCustomerPurchases(JSON.parse(savedPurchasesData));
-    }
-    if (savedInvoiceNumber) {
-      setInvoiceDetails(prev => ({ ...prev, number: savedInvoiceNumber }));
+    try {
+      const savedCustomersData = localStorage.getItem('invoiceCustomers');
+      const savedPurchasesData = localStorage.getItem('customerPurchases');
+      const savedInvoiceNumber = localStorage.getItem('lastInvoiceNumber');
+      
+      if (savedCustomersData) {
+        const parsedCustomers = JSON.parse(savedCustomersData);
+        setSavedCustomers(parsedCustomers);
+      }
+      if (savedPurchasesData) {
+        const parsedPurchases = JSON.parse(savedPurchasesData);
+        setCustomerPurchases(parsedPurchases);
+      }
+      if (savedInvoiceNumber) {
+        setInvoiceDetails(prev => ({ ...prev, number: savedInvoiceNumber }));
+      }
+    } catch (error) {
+      console.error('Error loading data from localStorage:', error);
     }
   }, []);
 
   // Save data to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('invoiceCustomers', JSON.stringify(savedCustomers));
+    try {
+      localStorage.setItem('invoiceCustomers', JSON.stringify(savedCustomers));
+    } catch (error) {
+      console.error('Error saving customers to localStorage:', error);
+    }
   }, [savedCustomers]);
 
   useEffect(() => {
-    localStorage.setItem('customerPurchases', JSON.stringify(customerPurchases));
+    try {
+      localStorage.setItem('customerPurchases', JSON.stringify(customerPurchases));
+    } catch (error) {
+      console.error('Error saving purchases to localStorage:', error);
+    }
   }, [customerPurchases]);
 
   useEffect(() => {
-    localStorage.setItem('lastInvoiceNumber', invoiceDetails.number);
+    try {
+      localStorage.setItem('lastInvoiceNumber', invoiceDetails.number);
+    } catch (error) {
+      console.error('Error saving invoice number to localStorage:', error);
+    }
   }, [invoiceDetails.number]);
 
   const saveCustomer = () => {
