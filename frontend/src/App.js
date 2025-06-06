@@ -338,7 +338,7 @@ const InvoiceGenerator = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Invoice Generator</h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
             <button
               onClick={addItem}
               className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
@@ -361,7 +361,23 @@ const InvoiceGenerator = () => {
               onClick={handlePrint}
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
             >
-              Print Invoice
+              🖨️ Print Invoice
+            </button>
+            <button
+              onClick={exportToPDF}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              📄 Export PDF
+            </button>
+          </div>
+
+          {/* Reporting Section */}
+          <div className="mb-4">
+            <button
+              onClick={() => setShowReporting(!showReporting)}
+              className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
+            >
+              {showReporting ? 'Hide Reports' : '📊 View Reports'}
             </button>
           </div>
 
