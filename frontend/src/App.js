@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
 const InvoiceGenerator = () => {
@@ -17,6 +17,10 @@ const InvoiceGenerator = () => {
     telFax: '',
     trn: ''
   });
+
+  const [savedCustomers, setSavedCustomers] = useState([]);
+  const [showCustomerSelector, setShowCustomerSelector] = useState(false);
+  const [customerSearchTerm, setCustomerSearchTerm] = useState('');
 
   const [invoiceDetails, setInvoiceDetails] = useState({
     number: '6005',
