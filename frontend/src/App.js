@@ -307,24 +307,33 @@ const InvoiceGenerator = () => {
               
               <div className="max-h-60 overflow-y-auto">
                 {filteredCustomers.length > 0 ? (
-                  filteredCustomers.map(customer => (
-                    <div key={customer.id} className="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50">
-                      <div className="flex-1 cursor-pointer" onClick={() => loadCustomer(customer)}>
-                        <div className="font-medium text-gray-800">{customer.name}</div>
-                        <div className="text-sm text-gray-600">{customer.address}</div>
-                        <div className="text-xs text-gray-500">{customer.telFax}</div>
+                  filteredCustomers.map(customer => {
+                    const currentMonth = new Date().toISOString().slice(0, 7);
+                    const monthlyTotal = getCustomerMonthlyTotal(customer.name, currentMonth);
+                    const totalPurchases = getCustomerTotalPurchases(customer.name);
+                    
+                    return (
+                      <div key={customer.id} className="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50">
+                        <div className="flex-1 cursor-pointer" onClick={() => loadCustomer(customer)}>
+                          <div className="font-medium text-gray-800">{customer.name}</div>
+                          <div className="text-sm text-gray-600">{customer.address}</div>
+                          <div className="text-xs text-gray-500">{customer.telFax}</div>
+                          <div className="text-xs text-blue-600 mt-1">
+                            This month: AED {monthlyTotal.toFixed(2)} | Total: AED {totalPurchases.toFixed(2)}
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCustomer(customer.id);
+                          }}
+                          className="text-red-500 hover:text-red-700 ml-2"
+                        >
+                          🗑️
+                        </button>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteCustomer(customer.id);
-                        }}
-                        className="text-red-500 hover:text-red-700 ml-2"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className="text-gray-500 text-center py-4">
                     {customerSearchTerm ? 'No customers found matching your search.' : 'No saved customers yet.'}
