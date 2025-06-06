@@ -70,11 +70,14 @@ const InvoiceGenerator = () => {
   };
 
   const calculateVat = () => {
-    return (calculateSubtotal() * vatRate) / 100;
+    const subtotal = calculateSubtotal();
+    return (subtotal * vatRate) / 100;
   };
 
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateVat();
+    const subtotal = calculateSubtotal();
+    const vat = calculateVat();
+    return subtotal + vat;
   };
 
   const handlePrint = () => {
