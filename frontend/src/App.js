@@ -466,6 +466,124 @@ const InvoiceGenerator = () => {
             </div>
           )}
 
+          {/* Detailed Reporting Section */}
+          {showReporting && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Detailed Business Reports</h3>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Top Customers */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3">🏆 Top Customers (All Time)</h4>
+                  <div className="space-y-2">
+                    {getTopCustomers().slice(0, 5).map((customer, index) => (
+                      <div key={customer.id} className="flex justify-between items-center p-2 bg-white rounded">
+                        <span className="font-medium">{index + 1}. {customer.name}</span>
+                        <span className="text-green-600 font-bold">AED {customer.totalSpent.toFixed(2)}</span>
+                      </div>
+                    ))}
+                    {getTopCustomers().length === 0 && (
+                      <p className="text-gray-500 text-center py-4">No customer purchases yet</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Monthly Sales */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3">📅 Monthly Sales</h4>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {getAllMonthsData().slice(0, 10).map((data, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-white rounded text-sm">
+                        <div>
+                          <div className="font-medium">{data.customer}</div>
+                          <div className="text-gray-500">{data.month}</div>
+                        </div>
+                        <span className="text-blue-600 font-bold">AED {data.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                    {getAllMonthsData().length === 0 && (
+                      <p className="text-gray-500 text-center py-4">No sales data yet</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Summary Statistics */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3">📈 Business Summary</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-2 bg-white rounded">
+                      <span>Total Customers:</span>
+                      <span className="font-bold">{savedCustomers.length}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-white rounded">
+                      <span>Active Customers:</span>
+                      <span className="font-bold">{getTopCustomers().length}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-white rounded">
+                      <span>Total Revenue:</span>
+                      <span className="font-bold text-green-600">
+                        AED {getAllMonthsData().reduce((sum, data) => sum + data.amount, 0).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-white rounded">
+                      <span>This Month ({getCurrentMonthRange()}):</span>
+                      <span className="font-bold text-blue-600">
+                        AED {getAllMonthsData()
+                          .filter(data => data.monthKey === new Date().toISOString().slice(0, 7))
+                          .reduce((sum, data) => sum + data.amount, 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Transactions */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3">💰 Recent Transactions</h4>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {getAllMonthsData().slice(0, 8).map((data, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-white rounded text-sm border-l-4 border-blue-500">
+                        <div>
+                          <div className="font-medium">{data.customer}</div>
+                          <div className="text-gray-500">{data.month}</div>
+                        </div>
+                        <span className="text-green-600 font-bold">+AED {data.amount.toFixed(2)}</span>
+                      </div>
+                    ))}
+                    {getAllMonthsData().length === 0 && (
+                      <p className="text-gray-500 text-center py-4">No transactions yet</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Export Reports Button */}
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => {
+                    const reportData = {
+                      topCustomers: getTopCustomers(),
+                      monthlySales: getAllMonthsData(),
+                      totalRevenue: getAllMonthsData().reduce((sum, data) => sum + data.amount, 0),
+                      totalCustomers: savedCustomers.length,
+                      generatedOn: new Date().toLocaleString()
+                    };
+                    
+                    const dataStr = JSON.stringify(reportData, null, 2);
+                    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `Business_Report_${new Date().toISOString().slice(0, 10)}.json`;
+                    link.click();
+                  }}
+                  className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700"
+                >
+                  📊 Export Full Report (JSON)
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Quick Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
