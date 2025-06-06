@@ -629,7 +629,7 @@ const InvoiceGenerator = () => {
                       <td className="p-2 text-right w-24">{calculateSubtotal().toFixed(2)}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="p-2 text-right font-medium">Vat {vatRate}%:</td>
+                      <td className="p-2 text-right font-medium">Total VAT:</td>
                       <td className="p-2 text-right">{calculateTotalVat().toFixed(2)}</td>
                     </tr>
                     <tr className="bg-gray-50">
